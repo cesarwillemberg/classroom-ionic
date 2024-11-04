@@ -9,11 +9,9 @@ import {
     IonToolbar,
     IonTitle,
     IonToast,
-    IonGrid,
-    IonRow,
-    IonCol,
     IonItem,
 } from '@ionic/react';
+import { IonInputCustomEvent, InputChangeEventDetail } from '@ionic/core'; // Importando tipos
 
 interface ClassFormProps {
     onSubmit: (classData: ClassData) => void;
@@ -37,23 +35,15 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-    
-        if (e.target instanceof HTMLInputElement && e.target.type === "file") {
-            const file = e.target.files ? e.target.files[0] : null;
-            setFormData((prevState) => ({
-                ...prevState,
-                [name]: file,
-            }));
-        } else {
-            setFormData((prevState) => ({
-                ...prevState,
-                [name]: value,
-            }));
-        }
+    const handleChange = (event: IonInputCustomEvent<InputChangeEventDetail>) => {
+        const { value } = event.detail;
+        const inputId = event.target.id;
+
+        setFormData((prevState) => ({
+            ...prevState,
+            [inputId]: value,
+        }));
     };
-    
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -72,7 +62,8 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
         }
 
         try {
-            const response = await fetch('/src/api/cards/route.ts', {
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://200.132.192.203:3000/';
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 body: formDataToSend,
             }).then((response) => response.json());
@@ -84,14 +75,14 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
                 setFormData({ nameClass: '', group: '', professorName: '' });
                 setImageProfile(null);
                 onClose();
+                window.location.reload();
             } else {
                 setToastMessage("Erro ao criar turma: " + (response.error || "Erro desconhecido"));
                 setShowToast(true);
             }
         } catch (error) {
-            console.log('aaaaa');
             console.error("Erro ao enviar dados:", error);
-            setToastMessage("Erro ao criar turma. Tente novamente mais tarde.");
+            setToastMessage("Erro ao criar turma. Tente novamente mais tarde."); // Aqui está o uso correto
             setShowToast(true);
         }
     };
@@ -108,8 +99,8 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
                     <IonItem>
                         <IonLabel position="stacked">Turma <span>(obrigatório)</span></IonLabel>
                         <IonInput
+                            id="nameClass"
                             type="text"
-                            name="nameClass"
                             value={formData.nameClass}
                             onIonChange={handleChange}
                             required
@@ -118,8 +109,8 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
                     <IonItem>
                         <IonLabel position="stacked">Grupo:</IonLabel>
                         <IonInput
+                            id="group"
                             type="text"
-                            name="group"
                             value={formData.group}
                             onIonChange={handleChange}
                             required
@@ -128,8 +119,8 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
                     <IonItem>
                         <IonLabel position="stacked">Nome do Professor:</IonLabel>
                         <IonInput
+                            id="professorName"
                             type="text"
-                            name="professorName"
                             value={formData.professorName}
                             onIonChange={handleChange}
                             required
@@ -137,15 +128,19 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
                     </IonItem>
                     <IonItem>
                         <IonLabel>Carregar imagem de perfil:</IonLabel>
+                        <IonButton onClick={() => document.getElementById('fileInput')?.click()}>
+                            Selecionar arquivo
+                        </IonButton>
                         <input
+                            id="fileInput"
                             type="file"
                             accept="image/*"
+                            style={{ display: 'none' }} // Esconde o input padrão
                             onChange={handleFileChange}
                         />
                     </IonItem>
 
                     <div className="ion-margin-top">
-                        {/* <IonButton expand="full" color="light" onClick={onClose}>Cancelar</IonButton> */}
                         <IonButton expand="full" type="submit" color="primary">Criar</IonButton>
                     </div>
                 </form>
@@ -153,7 +148,7 @@ const FormNewClass: React.FC<ClassFormProps> = ({ onSubmit, onClose }) => {
                 <IonToast
                     isOpen={showToast}
                     onDidDismiss={() => setShowToast(false)}
-                    message="Formulário enviado com sucesso!"
+                    message={toastMessage} // Aqui está o uso correto
                     duration={2000}
                 />
             </IonContent>

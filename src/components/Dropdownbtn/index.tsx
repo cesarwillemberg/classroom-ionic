@@ -7,17 +7,18 @@ interface DropdownProps {
     label: string;
     icon: JSX.Element;
     border?: string;
+    expanded: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ children, label, icon, border }: DropdownProps) => {
+const Dropdown: React.FC<DropdownProps> = ({ children, label, icon, border,  expanded }: DropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const context = useContext(SidebarContext);
+    // const context = useContext(SidebarContext);
 
-    if (!context) {
-        throw new Error("Dropdown must be used within a Sidebar");
-    }
+    // if (!context) {
+    //     throw new Error("Dropdown must be used within a Sidebar");
+    // }
 
-    const { expanded } = context;
+    // const { expanded } = context;
 
     const toggleDropdown = () => {
         setIsOpen(prev => !prev);
@@ -41,10 +42,11 @@ const Dropdown: React.FC<DropdownProps> = ({ children, label, icon, border }: Dr
                     {label}
                 </IonLabel>
             </IonItem>
-
             {isOpen && expanded && (
-                <IonList className="rounded-md bg-white">
-                    {children}
+                <IonList>
+                    <div className="rounded-md bg-white">
+                        {children}
+                    </div>
                 </IonList>
             )}
         </div>

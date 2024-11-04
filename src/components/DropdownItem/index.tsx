@@ -5,9 +5,10 @@ interface DropdownItemProps {
     text: string;
     icon?: JSX.Element;
     src?: string;
+    expanded: boolean;
 }
 
-const DropdownItem: React.FC<DropdownItemProps> = ({ text, icon, src = "#" }) => {
+const DropdownItem: React.FC<DropdownItemProps> = ({ text, icon, src = "#",  expanded }) => {
     return (
         <IonRouterLink href={src} style={{ textDecoration: 'none' }}>
             <IonItem button className="flex items-center text-white">

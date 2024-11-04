@@ -8,16 +8,16 @@ interface SidebarItemProps {
     active?: boolean;
     alert?: boolean;
     src?: string;
+    expanded: boolean;
 }
 
-export const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, active, alert, src = "#" }) => {
-    const context = useContext(SidebarContext);
-
-    if (!context) {
-        throw new Error("SidebarItem must be used within a Sidebar");
-    }
-
-    const { expanded } = context;
+export const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, active, alert, src = "#", expanded }) => {
+    
+    // const context = useContext(SidebarContext);
+    // if (!context) {
+    //     throw new Error("SidebarItem must be used within a Sidebar");
+    // }
+    // const { expanded } = context;
 
     return (
         <IonRouterLink href={src} style={{ textDecoration: 'none' }}>
@@ -29,7 +29,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, active, al
                 <IonLabel className={`overflow-hidden text-sm transition-all ${expanded ? "ml-3" : "ml-0 opacity-0"}`} style={{ display: expanded ? '' : 'none' }} >
                     {text}
                 </IonLabel>
-                {alert && <div className={`absolute right-2 w-2 h-2 rounded bg-indigo-400 ${expanded ? "" : "top-2"}`}></div>}
+                {/* {alert && <div className={`absolute right-2 w-2 h-2 rounded bg-indigo-400 ${expanded ? "" : "top-2"}`}></div>} */}
             </IonItem>
         </IonRouterLink>
     );

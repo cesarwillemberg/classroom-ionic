@@ -9,8 +9,8 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
+    
     // const context = useContext(SidebarContext);
-
     // if (!context) {
     //     throw new Error("Navbar must be used within a SidebarProvider");
     // }
